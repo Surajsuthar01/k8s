@@ -1,0 +1,21 @@
+kind: DaemonSet
+apiVersion: apps/v1
+metadata:
+   name: nginx-daemonsets
+   namespace: suraj-nginx
+spec:
+   selector:
+     matchLabels:
+      app: nginx
+
+   template:
+     metadata:
+      name: nginx-dmn-sets
+      labels:
+       app: nginx
+     spec:
+       containers:
+       - name: nginx
+         image: nginx
+         ports:
+         - containerPort: 80
