@@ -1,0 +1,41 @@
+apiVersion: batch/v1
+kind: CronJob
+metadata:
+  name: minute-backup
+  namespace: suraj-nginx
+spec:
+  schedule: "* * * * *"  # Runs every minute
+  jobTemplate:
+    spec:
+      template:
+        metadata:
+          labels:
+            app: minute-backup
+        spec:
+          containers:
+          - name: backup-container
+            image: busybox
+            command:
+              - sh
+              - -c
+              - |
+                echo "Backup Started";
+                mkdir -p /backups;
+                mkdir -p /data;
+                cp -r /data/* /backups/;
+                echo "Backup completed";
+            volumeMounts:
+              - name: data-volume
+                mountPath: /data
+              - name: backup-volume
+                mountPath: /backups
+          restartPolicy: OnFailure
+          volumes:
+            - name: data-volume
+              hostPath:
+                path: /data
+                type: DirectoryOrCreate
+            - name: backup-volume
+              hostPath:
+                path: /backups
+                type: DirectoryOrCreate
